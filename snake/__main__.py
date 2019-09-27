@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from snake.exceptions import *
 from snake.models import *
 from snake.settings import *
 from snake.UI import *
@@ -10,8 +11,6 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
     LAST_MOVED_TIME = datetime.now()
-    TIME_INTERVAL = timedelta(seconds=0.3)
-
     game_board = Board()
 
     playing = True
@@ -25,8 +24,12 @@ def main():
                 if event.key in DIRECTION_ON_KEY:
                     game_board.snake.set_delta(DIRECTION_ON_KEY[event.key])
 
-        if datetime.now() - LAST_MOVED_TIME > TIME_INTERVAL:
-            game_board.processing()
+        if datetime.now() - LAST_MOVED_TIME > game_board.time_interval:
+            try:
+                game_board.processing()
+            except (SnakeCollideItselfException, SnakeOutOfBoundaryException):
+                playing = False
+
             LAST_MOVED_TIME = datetime.now()
 
         draw_background(screen)
