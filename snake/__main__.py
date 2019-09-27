@@ -9,7 +9,8 @@ from snake.UI import *
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
+    pygame.display.set_caption("SNAKE!")
+    
     LAST_MOVED_TIME = datetime.now()
     game_board = Board()
 
@@ -21,6 +22,9 @@ def main():
                 playing = False
 
             elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    playing = False
+
                 if event.key in DIRECTION_ON_KEY:
                     game_board.snake.set_delta(DIRECTION_ON_KEY[event.key])
 
