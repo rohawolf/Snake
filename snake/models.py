@@ -5,7 +5,6 @@ from snake.exceptions import *
 from snake.UI import *
 
 
-
 class Apple:
     """Apple Object"""
     color = RED
@@ -66,6 +65,7 @@ class Board:
         self.time_interval = time_interval
         self.snake = snake
         self.apple = apple
+        self.eaten_apple_count = 0
 
     def draw(self, screen):
         self.snake.draw(screen)
@@ -86,10 +86,11 @@ class Board:
         # when snake eat apple
         if self.snake.head == self.apple.position:
             self.snake.grow()
+            self.eaten_apple_count += 1
             self.put_new_apple()
 
     def put_new_apple(self):
         not_available_positions = [self.snake.head] + self.snake.tail
-        self.apple = Apple((randint(0, 19), randint(0, 19)))
+        self.apple = Apple((randint(0, self.width - 1), randint(0, self.height - 1)))
         if self.apple.position in not_available_positions:
             self.put_new_apple()

@@ -1,3 +1,3 @@
-from snake.__main__ import main
+from snake import main
 
 main()

@@ -32,3 +32,9 @@ def draw_block(screen, color, position):
     """Draw block with color at position"""
     block = pygame.Rect((position[1] * BLOCK_SIZE, position[0] * BLOCK_SIZE), (BLOCK_SIZE, BLOCK_SIZE))
     pygame.draw.rect(screen, color, block)
+
+
+def draw_text(screen, text, color, position):
+    font = pygame.font.SysFont(None, 48)
+    text_img = font.render(text, True, color)
+    screen.blit(text_img, position)
