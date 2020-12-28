@@ -25,7 +25,7 @@ DIRECTION_ON_KEY = {
 def draw_background(screen):
     """ Draw background of pygame screen"""
     background = pygame.Rect((0, 0), (SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.draw.rect(screen, WHITE, background)
+    pygame.draw.rect(screen, BLACK, background)
 
 
 def draw_block(screen, color, position):
