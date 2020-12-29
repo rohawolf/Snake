@@ -2,21 +2,21 @@ from datetime import datetime, timedelta
 from snake.settings import *
 
 
-def draw_background(screen, width=SCREEN_WIDTH, height=SCREEN_HEIGHT):
+def draw_background(screen, width=Screen.WIDTH, height=Screen.HEIGHT):
     """ Draw background of pygame screen"""
     background = pygame.Rect((0, 0), (width, height))
     pygame.draw.rect(screen, WHITE, background)
 
 
-def draw_block(screen, color, position, block_size=BLOCK_SIZE):
+def draw_block(screen, color, position, Screen.BLOCK_SIZE=Screen.BLOCK_SIZE):
     """Draw block with color at position"""
-    block = pygame.Rect((position[1] * block_size, position[0] * block_size), (block_size, block_size))
+    block = pygame.Rect((position[1] * Screen.BLOCK_SIZE, position[0] * Screen.BLOCK_SIZE), (Screen.BLOCK_SIZE, Screen.BLOCK_SIZE))
     pygame.draw.rect(screen, color, block)
 
 
 def run():
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
 
     LAST_POSITION = [0, 0]
     LAST_DELTA = [0, 1]
@@ -30,8 +30,8 @@ def run():
                 playing = False
 
             elif event.type == pygame.KEYDOWN:
-                if event.key in DIRECTION_ON_KEY:
-                    LAST_DELTA = DIRECTION_ON_KEY[event.key]
+                if event.key in Controller.DIRECTION_ON_KEY:
+                    LAST_DELTA = Controller.DIRECTION_ON_KEY[event.key]
 
         next_pos = LAST_POSITION
         if datetime.now() - LAST_MOVED_TIME >= timedelta(seconds=1):

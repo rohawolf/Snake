@@ -2,12 +2,12 @@ from random import randint
 from datetime import timedelta
 
 from snake.exceptions import *
-from snake.UI import *
+from snake.rendering import *
 
 
 class Apple:
     """Apple Object"""
-    color = RED
+    color=Colors.RED
 
     def __init__(self, position=(5, 5)):
         self.position = position
@@ -18,9 +18,10 @@ class Apple:
 
 class Snake:
     """Snake Object"""
-    color = GREEN
+    head_color=Colors.BLUE
+    color=Colors.GREEN
 
-    def __init__(self, length=4, head=(6, 6), delta=(0, 1)):
+    def __init__(self, length=4, head=(6, 6), delta=(1, 0)):
         self.length = length
         self.delta = delta
         self.head = head
@@ -33,7 +34,7 @@ class Snake:
 
     def draw(self, screen):
         # draw head
-        draw_block(screen, self.color, self.head)
+        draw_block(screen, self.head_color, self.head)
 
         # draw trailing tails
         for tail_pos in self.tail:
@@ -55,42 +56,6 @@ class Snake:
         last_two_tail_pos = self.tail[-2:]
         self.tail.append(tuple(2 * d - p for p, d in zip(*last_two_tail_pos)))
 
-
-class Board:
-    """Game Board Object"""
-
-    def __init__(self, width=20, height=20, time_interval=timedelta(seconds=0.3), snake=Snake(), apple=Apple()):
-        self.width = width
-        self.height = height
-        self.time_interval = time_interval
-        self.snake = snake
-        self.apple = apple
-        self.eaten_apple_count = 0
-
-    def draw(self, screen):
-        self.snake.draw(screen)
-        self.apple.draw(screen)
-
-    def processing(self):
-        self.snake.crawl()
-        self.time_interval = timedelta(seconds=(0.3 - 0.05 * int(self.snake.length / 8)))
-
-        # when snake collide itself
-        if self.snake.head in self.snake.tail:
-            raise SnakeCollideItselfException()
-
-        # when snake out of boundary
-        if self.snake.head[0] not in range(self.height) or self.snake.head[1] not in range(self.width):
-            raise SnakeOutOfBoundaryException()
-
-        # when snake eat apple
-        if self.snake.head == self.apple.position:
-            self.snake.grow()
-            self.eaten_apple_count += 1
-            self.put_new_apple()
-
-    def put_new_apple(self):
-        not_available_positions = [self.snake.head] + self.snake.tail
-        self.apple = Apple((randint(0, self.width - 1), randint(0, self.height - 1)))
-        if self.apple.position in not_available_positions:
-            self.put_new_apple()
+    @property
+    def frequency(self):
+        return 5 - 0.1 * int(self.length / 5)
