@@ -1,9 +1,9 @@
-from datetime import datetime, timedelta
+from random import randint
 
-from snake.exceptions import *
-from snake.models import *
 from snake.config import *
-from snake.rendering import *
+from snake.exceptions import SnakeExc
+from snake.objects import Apple, Snake
+from snake.rendering import draw_background, draw_text
 
 class Board:
     def __init__(self, font, width=20, height=20, snake:Snake=None, apple:Apple=None):
@@ -12,40 +12,41 @@ class Board:
         self.font = font
         
         self.snake = snake or Snake()
-        self.apple = apple or Apple()
+        self.apple = None
         self.eaten_apple_count = 0
         self.tick = self.snake.frequency
     
-
     def draw(self, screen):
         self.snake.draw(screen)
         self.apple.draw(screen)
 
-    def processing(self):
-        # when snake collide itself
-        if self.snake.head in self.snake.tail:
-            raise SnakeCollideItselfException()
+    def put_new_apple(self):
+        not_available_positions = [self.snake.head] + self.snake.tail
 
-        # when snake out of boundary
-        if self.snake.head[0] not in range(self.height) or self.snake.head[1] not in range(self.width):
-            raise SnakeOutOfBoundaryException()
+        def _find_new_apple_position():
+            new_position = (randint(1, self.width) - 1, randint(1, self.height) - 1)
+            if new_position in not_available_positions:
+                new_position = _find_new_apple_position()
+
+            return new_position
+        
+        self.apple = Apple(_find_new_apple_position())
+
+    def processing(self):
+        self.snake.processing(range(self.height), range(self.width))
+
+        # put new random apple
+        if self.apple is None:
+            self.put_new_apple()
 
         # when snake eat apple
         if self.snake.head == self.apple.position:
             self.eaten_apple_count += 1
-            self.put_new_apple()
             self.snake.grow()
+            self.put_new_apple()
 
         self.snake.crawl()
         self.tick = self.snake.frequency
-
-    def put_new_apple(self):
-        not_available_positions = [self.snake.head] + self.snake.tail
-
-        random_position = (randint(1, self.width) - 1, randint(1, self.height) - 1)
-        if random_position in not_available_positions:
-            self.put_new_apple()
-        self.apple = Apple(random_position)
 
 
 def main():
@@ -85,10 +86,7 @@ def main():
             draw_background(screen)
 
             if game_status in ['initial', 'gameover']:
-                if game_status == 'gameover':
-                    text = 'GAME OVER! PRESS ENTER TO RESTART'
-                else:
-                    text = 'PRESS ENTER TO START'
+                text = f"{'GAME OVER! ' if game_status == 'gameover' else ''}PRESS ENTER TO START"
 
             elif game_status == 'playing':
                 game_board.processing()
@@ -99,7 +97,7 @@ def main():
             pygame.display.flip()
             clock.tick(game_board.tick)
 
-        except (SnakeCollideItselfException, SnakeOutOfBoundaryException):
+        except (SnakeExc.CollideItself, SnakeExc.OutOfBoundary):
             game_status = 'gameover'
 
         

@@ -1,8 +1,6 @@
-from random import randint
-from datetime import timedelta
-
-from snake.exceptions import *
-from snake.rendering import *
+from snake.config import Colors
+from snake.exceptions import SnakeExc
+from snake.rendering import draw_block
 
 
 class Apple:
@@ -56,6 +54,18 @@ class Snake:
         last_two_tail_pos = self.tail[-2:]
         self.tail.append(tuple(2 * d - p for p, d in zip(*last_two_tail_pos)))
 
+    def processing(self, board_height_range:range, board_width_range:range):
+        # when snake collide itself
+        if self.head in self.tail:
+            raise SnakeExc.CollideItself()
+    
+        # when snake out of boundary
+        if (
+            self.head[0] not in board_height_range
+            or self.head[1] not in board_width_range
+        ):
+            raise SnakeExc.OutOfBoundary()
+    
     @property
     def frequency(self):
         return 5 - 0.1 * int(self.length / 5)

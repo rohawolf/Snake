@@ -22,4 +22,3 @@ class Controller:
         pygame.K_LEFT: (-1, 0),
         pygame.K_RIGHT: (1, 0),
     }
-
